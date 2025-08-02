@@ -1,4 +1,4 @@
-# captcha-suite
+# pytorch-captcha
 
 一款基于 Python 的验证码全流程工具包，集验证码生成、深度学习模型训练与验证码识别于一体。
 
