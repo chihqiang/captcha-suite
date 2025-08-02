@@ -1,73 +1,9 @@
 import os
 import numpy as np
 import torch
-import torch.nn as nn
 from PIL import Image
-from config import CHARSET, IMAGE_SIZE, OUTPUT_DIR,PY_MODEL_FILE,CODE_MAX_LENGTH
-
-# 设置设备
-device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
-print(f"使用设备: {device}")
-
-class CaptchaModel(nn.Module):
-    def __init__(self):
-        super(CaptchaModel, self).__init__()
-        self.image_width, self.image_height = IMAGE_SIZE
-        self.charset_size = len(CHARSET)
-        
-        # 定义网络结构
-        self.conv_layers = nn.Sequential(
-            # 卷积层1
-            nn.Conv2d(1, 32, kernel_size=3, padding=1),
-            nn.BatchNorm2d(32),
-            nn.ReLU(),
-            nn.MaxPool2d(kernel_size=2),
-            # 卷积层2
-            nn.Conv2d(32, 64, kernel_size=3, padding=1),
-            nn.BatchNorm2d(64),
-            nn.ReLU(),
-            nn.MaxPool2d(kernel_size=2),
-            # 卷积层3
-            nn.Conv2d(64, 128, kernel_size=3, padding=1),
-            nn.BatchNorm2d(128),
-            nn.ReLU(),
-            nn.MaxPool2d(kernel_size=2),
-            # 卷积层4
-            nn.Conv2d(128, 256, kernel_size=3, padding=1),
-            nn.BatchNorm2d(256),
-            nn.ReLU(),
-            nn.MaxPool2d(kernel_size=2)
-        )
-        
-        # 计算卷积后的输出大小
-        conv_output_size = self._get_conv_output_size()
-        
-        # 全连接层
-        self.fc_layers = nn.Sequential(
-            nn.Linear(conv_output_size, 512),
-            nn.BatchNorm1d(512),
-            nn.ReLU(),
-            nn.Dropout(0.5),
-            nn.Linear(512, 256),
-            nn.BatchNorm1d(256),
-            nn.ReLU(),
-            nn.Dropout(0.5),
-            nn.Linear(256, CODE_MAX_LENGTH * self.charset_size)
-        )
-
-    def _get_conv_output_size(self):
-        """计算卷积层输出的大小"""
-        with torch.no_grad():
-            dummy_input = torch.zeros(1, 1, self.image_height, self.image_width)
-            output = self.conv_layers(dummy_input)
-            return output.view(1, -1).size(1)
-
-    def forward(self, x):
-        x = self.conv_layers(x)
-        x = x.view(x.size(0), -1)  # 展平
-        x = self.fc_layers(x)
-        x = x.view(x.size(0), CODE_MAX_LENGTH, self.charset_size)  # 重塑为 (批量大小, 6, 字符集大小)
-        return x
+from config import CHARSET, IMAGE_SIZE, OUTPUT_DIR, PY_MODEL_FILE, CODE_MAX_LENGTH
+from model import CaptchaModel, device
 
 class CaptchaPredictor:
     def __init__(self, model_path=PY_MODEL_FILE):
