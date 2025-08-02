@@ -1,0 +1,8 @@
+# 依赖库列表
+# 基础依赖
+pillow==11.3.0
+matplotlib==3.9.2
+
+
+# PyTorch 相关依赖 (可选)
+torch==2.7.1
