@@ -76,7 +76,7 @@ class CaptchaPredictor:
         for filename in file_list:
             image_path = os.path.join(image_dir, filename)
             # 真实标签（从文件名中提取）
-            true_label = filename.split('_')[2].split('.')[0]
+            true_label = filename.split('.')[0]
             true_length = len(true_label)
             # 预测，传入真实长度以截断结果
             predicted_label = self.predict(image_path, true_length)

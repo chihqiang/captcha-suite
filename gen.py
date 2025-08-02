@@ -67,7 +67,7 @@ class CaptchaGenerator:
         for i in range(count):
             image, text = self.generate_image()
             # 保存图片，文件名包含验证码文本
-            filename = f"captcha_{i}_{text}.png"
+            filename = f"{text}.png"
             filepath = os.path.join(config.OUTPUT_DIR, filename)
             image.save(filepath)
             print(f"Saved captcha to {filepath}")

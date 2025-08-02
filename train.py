@@ -34,7 +34,7 @@ class CaptchaDataset(Dataset):
         for filename in file_list:
             try:
                 # 从文件名中提取验证码文本
-                captcha_text = filename.split('_')[2].split('.')[0]
+                captcha_text = filename.split('.')[0]
                 # 确保验证码长度不超过最大长度
                 if len(captcha_text) > config.CODE_MAX_LENGTH:
                     continue
@@ -299,9 +299,10 @@ class CaptchaTrainer:
             # 保存最佳模型
             if val_acc > self.best_val_acc:
                 self.best_val_acc = val_acc
-                torch.save(self.model.state_dict(), config.PY_MODEL_FILE)
-                print(f"💾 模型已保存: {config.PY_MODEL_FILE} (验证准确率={val_acc:.4f})")
+                print(f"💾 当前模型是成功的模型: (准确率达到={val_acc:.4f})")
 
+        torch.save(self.model.state_dict(), config.PY_MODEL_FILE)
+        print(f"💾 模型已保存: {config.PY_MODEL_FILE}")
         # 绘制训练历史
         self.plot_history(history)
         # 保存训练历史
